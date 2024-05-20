@@ -59,5 +59,16 @@ void Graph::RemoveEdge(int u, int v) {
     else {
         throw invalid_argument("Invalid vertex index");
     }
-        
+}
+
+// Method to get the transposed graph
+Graph* Graph::getTransposed() const
+{
+    Graph* transposedGraph = new Graph(n);
+    for (int v = 0; v < n; v++) {
+        for (int u : adjacencyList[v]) {
+            transposedGraph->adjacencyList[u - 1].push_back(v + 1);
+        }
+    }
+    return transposedGraph;
 }
