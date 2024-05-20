@@ -17,29 +17,32 @@ int main() {
     // Print the graph
     g.printGraph();
 
-    // Check adjacency
-    cout << "Is 1 adjacent to 2? " << (g.IsAdjacent(1, 2) ? "Yes" : "No") << endl;
-    cout << "Is 2 adjacent to 1? " << (g.IsAdjacent(2, 1) ? "Yes" : "No") << endl;
-
-    // Get adjacency list of vertex 1
-    try {
-        const auto& adjList = g.GetAdjList(1);
-        cout << "Adjacency list of vertex 1:";
-        for (const int& adj : adjList) {
-            cout << " " << adj;
+    Graph* gTransposed = g.getTransposed();
+    
+    
+    for (int i = 0; i < g.getNumOfVertices(); i++)
+    {
+        cout << i + 1 << ": ";
+        const list<int>& adj = g.GetAdjList(i + 1);
+        typename list<int>::const_iterator itr = adj.begin();
+        for (int j = 0; j < adj.size(); j++)
+        {
+            cout << *itr << " ";
+            ++itr;
         }
         cout << endl;
     }
-    catch (const out_of_range& e) {
-        cerr << e.what() << endl;
+    cout << "-----------------------------------------------------" << endl;
+    for (int i = 0; i < gTransposed->getNumOfVertices(); i++)
+    {
+        cout << i + 1 << ": ";
+        const list<int>& adj = gTransposed->GetAdjList(i + 1);
+        typename list<int>::const_iterator itr = adj.begin();
+        for (int j = 0; j < adj.size(); j++)
+        {
+            cout << *itr << " ";
+            ++itr;
+        }
+        cout << endl;
     }
-
-    // Remove an edge
-    g.RemoveEdge(1, 5);
-    cout << "After removing edge between 1 and 5:" << endl;
-    g.printGraph();
-
-    // Print the number of vertices and edges
-    cout << "Number of vertices: " << g.getNumOfVertices() << endl;
-    cout << "Number of edges: " << g.getNumOfEdges() << endl;
 }
