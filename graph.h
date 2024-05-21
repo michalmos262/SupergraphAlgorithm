@@ -25,6 +25,7 @@ public:
 	void AddEdge(int u, int v);
 	void RemoveEdge(int u, int v);
 	void printGraph() const { cout << n << " " << m << endl; }
+
 };
 
 #endif // !__GRAPH_H

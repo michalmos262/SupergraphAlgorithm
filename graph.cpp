@@ -59,5 +59,4 @@ void Graph::RemoveEdge(int u, int v) {
     else {
         throw invalid_argument("Invalid vertex index");
     }
-        
 }
