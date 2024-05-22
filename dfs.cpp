@@ -2,19 +2,20 @@
 
 // Constructor - init the dfs
 Dfs::Dfs(Graph* graph) {
-    this->graph = graph;
+    originalGraph = graph;
     int n = graph->getNumOfVertices();
-    this->color = (eVerticesDfsStatus*)calloc(n+1, sizeof(eVerticesDfsStatus));
-    this->startList.resize(n);
-    this->endList.resize(n);
+    color = (eVerticesDfsStatus*)calloc(n + 1, sizeof(eVerticesDfsStatus));
+    startList.reserve(n);
+    endList.reserve(n);
+    dfsGraph = Graph(n);
     mainDfs();
 }
 
 // main loop of the dfs
 void Dfs::mainDfs() {
-    int n = graph->getNumOfVertices();
+    int n = originalGraph->getNumOfVertices();
     for (int i = 1; i <= n; i++) {
-        if (color[i] = eVerticesDfsStatus::WHITE)
+        if (color[i] == eVerticesDfsStatus::WHITE)
             visit(i);
     }
 }
@@ -23,11 +24,15 @@ void Dfs::mainDfs() {
 void Dfs::visit(int vertice) {
     color[vertice] = eVerticesDfsStatus::GRAY;
     startList.push_back(vertice); // i becomes gray, added to the start list
-    const list<int>& adjVertice = graph->GetAdjList(vertice);
+    const list<int>& adjVertice = originalGraph->GetAdjList(vertice);
     for (const int& adj : adjVertice)
     {
-        //mark edge???
-        visit(adj);
+        if (color[adj] == eVerticesDfsStatus::WHITE)
+        {
+            //its a tree arc, adding to the dfs tree
+            dfsGraph.AddEdge(vertice, adj);
+            visit(adj);
+        }
     }
     color[vertice] = eVerticesDfsStatus::BLACK;
     endList.push_back(vertice); // i becomes black, added to the end list

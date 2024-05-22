@@ -11,16 +11,17 @@ using namespace std;
 
 class Dfs {
 public:
-	enum eVerticesDfsStatus { WHITE, GRAY, BLACK };
+	enum eVerticesDfsStatus { WHITE = 0, GRAY, BLACK };
 	Dfs(Graph* graph);
-	list<int> getStartList() { return startList; }
-	list<int> getEndList() { return endList; }
+	vector<int> getStartList() { return startList; }
+	vector<int> getEndList() { return endList; }
+	Graph getDfsGraph() { return dfsGraph; }
 
 private:
-	Graph* graph;
+	Graph* originalGraph;
 	eVerticesDfsStatus* color;
-	Graph* dfsTrees;
-	list<int> startList, endList;
+	Graph dfsGraph;
+	vector<int> startList, endList;
 	void mainDfs();
 	void visit(int vertices);
 
