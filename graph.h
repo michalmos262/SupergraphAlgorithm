@@ -17,15 +17,17 @@ private:
 
 public:
 	Graph(int n = 0);
+	Graph(Graph& other);
+
 	int getNumOfVertices() const { return n; }
 	int getNumOfEdges() const { return m; }
 	void makeEmptyGraph(int n);
-	bool IsAdjacent(int u, int v) const;
-	const list<int>& GetAdjList(int u) const;
-	void AddEdge(int u, int v);
-	void RemoveEdge(int u, int v);
+	bool isAdjacent(int u, int v) const;
+	const list<int>& getAdjList(int u) const;
+	void addEdge(int u, int v);
+	void removeEdge(int u, int v);
 	void printGraph() const { cout << n << " " << m << endl; }
-	Graph* getTransposed() const;
+	Graph* getTransposed();
 };
 
 #endif // !__GRAPH_H
