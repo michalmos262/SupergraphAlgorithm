@@ -26,11 +26,11 @@ int main() {
         cout << *i << " ";
     cout << endl;
     cout << "The dfs graph:" << endl;
-    Graph dfsGraph = d.getDfsGraph();
-    for (int i = 0; i < dfsGraph.getNumOfVertices(); i++)
+    Graph* dfsGraph = d.getDfsGraph();
+    for (int i = 0; i < dfsGraph->getNumOfVertices(); i++)
     {
         cout << i + 1 << ": ";
-        const list<int>& adj = dfsGraph.GetAdjList(i + 1);
+        const list<int>& adj = dfsGraph->GetAdjList(i + 1);
         typename list<int>::const_iterator itr = adj.begin();
         for (int j = 0; j < adj.size(); j++)
         {

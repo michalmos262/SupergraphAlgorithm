@@ -1,4 +1,4 @@
-#ifndef __DFS_
+#ifndef __DFS_H
 #define __DFS_H
 
 #include <iostream>
@@ -13,18 +13,19 @@ class Dfs {
 public:
 	enum eVerticesDfsStatus { WHITE = 0, GRAY, BLACK };
 	Dfs(Graph* graph);
+	~Dfs();
 	vector<int> getStartList() { return startList; }
 	vector<int> getEndList() { return endList; }
-	Graph getDfsGraph() { return dfsGraph; }
+	Graph* getDfsGraph() { return dfsGraph; }
 
 private:
 	Graph* originalGraph;
 	eVerticesDfsStatus* color;
-	Graph dfsGraph;
+	Graph* dfsGraph;
 	vector<int> startList, endList;
 	void mainDfs();
 	void visit(int vertices);
 
 };
 
-#endif // !__DFS_
+#endif // !__DFS_H

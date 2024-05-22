@@ -7,8 +7,13 @@ Dfs::Dfs(Graph* graph) {
     color = (eVerticesDfsStatus*)calloc(n + 1, sizeof(eVerticesDfsStatus));
     startList.reserve(n);
     endList.reserve(n);
-    dfsGraph = Graph(n);
+    dfsGraph = new Graph(n);
     mainDfs();
+}
+
+// Dtor - delete the dfs
+Dfs::~Dfs() {
+    delete dfsGraph;
 }
 
 // main loop of the dfs
@@ -23,17 +28,19 @@ void Dfs::mainDfs() {
 // visit recursive function
 void Dfs::visit(int vertice) {
     color[vertice] = eVerticesDfsStatus::GRAY;
-    startList.push_back(vertice); // i becomes gray, added to the start list
+    startList.push_back(vertice); // vertice becomes gray, added to the start list
     const list<int>& adjVertice = originalGraph->GetAdjList(vertice);
     for (const int& adj : adjVertice)
     {
         if (color[adj] == eVerticesDfsStatus::WHITE)
         {
             //its a tree arc, adding to the dfs tree
-            dfsGraph.AddEdge(vertice, adj);
+            dfsGraph->AddEdge(vertice, adj);
             visit(adj);
         }
     }
     color[vertice] = eVerticesDfsStatus::BLACK;
-    endList.push_back(vertice); // i becomes black, added to the end list
+    endList.push_back(vertice); // vertice becomes black, added to the end list
 }
+
+
