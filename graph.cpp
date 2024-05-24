@@ -87,6 +87,7 @@ Graph* Graph::getTransposed()
     return transposedGraph;
 }
 
+// setting the color list to be all white
 void Graph::setColorList()
 {
     colorList.resize(n + 1);
@@ -96,6 +97,7 @@ void Graph::setColorList()
     }
 }
 
+// setting the DFS object values
 void Graph::setDFSObject(DFSObject* dfsObject)
 {
     dfsObject->dfsGraph = new Graph(n);
