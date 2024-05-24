@@ -1,5 +1,4 @@
 #include "graph.h"
-#include "dfsRunner.h"
 
 void printGraph(Graph* g)
 {
@@ -28,9 +27,7 @@ int main() {
     g->addEdge(6, 5);
     g->addEdge(4, 3);
 
-    DFSRunner dfsRunner(g);
-    dfsRunner.runSharirKosaraju();
-    Graph* dfsGraph = dfsRunner.getDfsGraph();
+    Graph* dfsGraph = g->runSharirKosaraju();
 
     printGraph(dfsGraph);
 }

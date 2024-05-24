@@ -10,11 +10,6 @@ using namespace std;
 
 class Graph
 {
-private:
-	int n; // number of vertices
-	int m; // number of edges
-	vector<list<int>> adjacencyList;  // adjacency list representation
-
 public:
 	Graph(int n = 0);
 	Graph(Graph& other);
@@ -28,6 +23,26 @@ public:
 	void removeEdge(int u, int v);
 	void printGraph() const { cout << n << " " << m << endl; }
 	Graph* getTransposed();
+
+	struct DFSObject
+	{
+		Graph* dfsGraph;
+		vector<int> endList;
+	};
+	DFSObject* runDFS(vector<int> startList = {});
+	Graph* runSharirKosaraju();
+
+private:
+	int n; // number of vertices
+	int m; // number of edges
+	vector<list<int>> adjacencyList;
+
+	enum eVerticesDfsStatus { WHITE = 0, GRAY, BLACK };
+	vector<eVerticesDfsStatus> colorList;
+
+	void setDFSObject(DFSObject* dfsObject);
+	void setColorList();
+	void visit(int vertice, DFSObject* dfsObject);
 };
 
 #endif // !__GRAPH_H

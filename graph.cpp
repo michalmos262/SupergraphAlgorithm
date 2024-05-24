@@ -86,3 +86,84 @@ Graph* Graph::getTransposed()
     }
     return transposedGraph;
 }
+
+void Graph::setColorList()
+{
+    colorList.resize(n + 1);
+    for (eVerticesDfsStatus color : colorList)
+    {
+        color = eVerticesDfsStatus::WHITE;
+    }
+}
+
+void Graph::setDFSObject(DFSObject* dfsObject)
+{
+    dfsObject->dfsGraph = new Graph(n);
+    dfsObject->endList.reserve(n + 1);
+    dfsObject->endList.push_back(0); // for ignoring index 0 later
+}
+
+// main loop of the DFS
+Graph::DFSObject* Graph::runDFS(vector<int> startList)
+{
+    DFSObject* dfsObject = new DFSObject();
+    setDFSObject(dfsObject);
+    setColorList();
+    for (int i = 1; i <= n; i++)
+    {
+        if (startList.size() != 0) // run DFS by given start list
+        {
+            if (colorList[startList[i]] == eVerticesDfsStatus::WHITE)
+                visit(startList[i], dfsObject);
+        }
+        else // no given start list, run DFS from first vertice
+        {
+            if (colorList[i] == eVerticesDfsStatus::WHITE)
+                visit(i, dfsObject);
+        }
+    }
+    return dfsObject;
+}
+
+// visit recursive function
+void Graph::visit(int vertice, DFSObject* dfsObject)
+{
+    colorList[vertice] = eVerticesDfsStatus::GRAY;
+    Graph* dfsGraph = dfsObject->dfsGraph;
+    const list<int>& adjVertice = getAdjList(vertice);
+    for (const int& adj : adjVertice)
+    {
+        if (colorList[adj] == eVerticesDfsStatus::WHITE)
+        {
+            //its a tree arc, adding to the dfs tree
+            dfsGraph->addEdge(vertice, adj);
+            visit(adj, dfsObject);
+        }
+    }
+
+    colorList[vertice] = eVerticesDfsStatus::BLACK;
+    dfsObject->endList.push_back(vertice); // vertice becomes black, added to the end list
+}
+
+// Sharir-Kosaraju algorithm
+Graph* Graph::runSharirKosaraju()
+{
+    DFSObject* dfsObject = new DFSObject();
+    setDFSObject(dfsObject);
+
+    // run DFS on the graph
+    dfsObject = runDFS();
+
+    // build the transposed graph
+    Graph* transposedGraph = getTransposed();
+
+    // Build reversed end list
+    vector<int> reversedEndList = dfsObject->endList;
+    reverse(reversedEndList.begin() + 1, reversedEndList.end());
+
+    // run DFS on the transposed graph using the reversed end list
+    DFSObject* transposedDfsGraph = transposedGraph->runDFS(reversedEndList);
+    delete transposedGraph;
+
+    return transposedDfsGraph->dfsGraph;
+}
