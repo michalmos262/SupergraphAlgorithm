@@ -16,11 +16,13 @@ public:
 
 	int getNumOfVertices() const { return n; }
 	int getNumOfEdges() const { return m; }
-	void makeEmptyGraph(int n);
-	bool isAdjacent(int u, int v) const;
-	const list<int>& getAdjList(int u) const;
-	void addEdge(int u, int v);
-	void removeEdge(int u, int v);
+
+	void MakeEmptyGraph(int n);
+	void addVertex();
+	bool IsAdjacent(int u, int v) const;
+	const list<int>& GetAdjList(int u) const;
+	void AddEdge(int u, int v);
+	void RemoveEdge(int u, int v);
 	void printGraph() const { cout << n << " " << m << endl; }
 	Graph* getTransposed();
 
@@ -28,21 +30,32 @@ public:
 	{
 		Graph* dfsGraph;
 		vector<int> endList;
+		vector<int> dfsRoots;
+		enum eVerticesDfsStatus { WHITE = 0, GRAY, BLACK };
+		vector<eVerticesDfsStatus> colorList;
 	};
-	DFSObject* runDFS(vector<int> startList = {});
-	Graph* runSharirKosaraju();
+
+	vector<int> getDfsRoots();
+	Graph* getDfsGraph();
+
+	void runDFS();
+	Graph* createSuperGraph();
 
 private:
 	int n; // number of vertices
 	int m; // number of edges
 	vector<list<int>> adjacencyList;
+	DFSObject* dfsObject = nullptr;
+	vector<int> machingVetexInSuperGraph;
 
-	enum eVerticesDfsStatus { WHITE = 0, GRAY, BLACK };
-	vector<eVerticesDfsStatus> colorList;
-
-	void setDFSObject(DFSObject* dfsObject);
+	void setDFSObject();
 	void setColorList();
-	void visit(int vertice, DFSObject* dfsObject);
+	void visit(int vertex, int root);
+	//below method is private, use only on the transpose graph
+	Graph* runDFSCreatingSuperGraph(vector<int> orderList);
+	void visitSuperGraph(int vertex, int root, int superGraphMachingVertex, Graph* superGraph);
+	void throwErrorIfDfsObjectDoestExist();
+
 };
 
 #endif // !__GRAPH_H
