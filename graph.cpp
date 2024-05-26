@@ -55,6 +55,7 @@ void Graph::AddVertex()
     adjacencyList.resize(n + 1);
 }
 
+// Verify if vertex exists and throw an error if not
 void Graph::verifyVertexExists(int v) const
 {
     if (!(v >= 1 && v <= n))
@@ -63,6 +64,7 @@ void Graph::verifyVertexExists(int v) const
     }
 }
 
+// Throw an error if the given vertices create a self edge
 void Graph::verifySelfEdge(int u, int v) const
 {
     if (u == v)
