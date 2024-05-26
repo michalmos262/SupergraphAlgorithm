@@ -3,32 +3,50 @@
 // Constructor
 Graph::Graph(int n)
 {
-    makeEmptyGraph(n);
+    MakeEmptyGraph(n);
 }
 
-// copy constructor
+// Copy constructor
 Graph::Graph(Graph& other)
 {
     n = other.n;
     m = other.m;
-    makeEmptyGraph(n);
+    MakeEmptyGraph(n);
     for (int v = 1; v <= n; v++) {
         for (int u : other.adjacencyList[v]) {
-            addEdge(v, u);
+            AddEdge(v, u);
         }
     }
 }
 
+// Dtor
+Graph::~Graph()
+{
+    if (!dfsObject)
+        delete dfsObject;
+}
+
+
 // Method to create an empty graph with n vertices
-void Graph::makeEmptyGraph(int n) {
+void Graph::MakeEmptyGraph(int n)
+{
     this->n = n;
     m = 0;
     adjacencyList.clear();
     adjacencyList.resize(n + 1);
 }
 
+// Method to add a vertex to the graph
+void Graph::AddVertex()
+{
+    n += 1;
+    adjacencyList.resize(n + 1);
+}
+
+
 // Method to check if there is an edge between u and v
-bool Graph::isAdjacent(int u, int v) const {
+bool Graph::IsAdjacent(int u, int v) const
+{
     if (u > 0 && u <= n && v > 0 && v <= n) {
         const list<int>& neighbors = adjacencyList[u];
         return find(neighbors.begin(), neighbors.end(), v) != neighbors.end();
@@ -37,7 +55,8 @@ bool Graph::isAdjacent(int u, int v) const {
 }
 
 // Method to get the adjacency list of vertex u
-const list<int>& Graph::getAdjList(int u) const {
+const list<int>& Graph::GetAdjList(int u) const
+{
     if (u > 0 && u <= n) {
         return adjacencyList[u];
     }
@@ -45,9 +64,10 @@ const list<int>& Graph::getAdjList(int u) const {
 }
 
 // Method to add an edge
-void Graph::addEdge(int u, int v) {
+void Graph::AddEdge(int u, int v)
+{
     if (u > 0 && u <= n && v > 0 && v <= n && u != v) {
-        if (!isAdjacent(u, v)) {
+        if (!IsAdjacent(u, v)) {
             adjacencyList[u].push_back(v);
             m++;
         }
@@ -58,7 +78,8 @@ void Graph::addEdge(int u, int v) {
 }
 
 // Method to remove an edge
-void Graph::removeEdge(int u, int v) {
+void Graph::RemoveEdge(int u, int v)
+{
     if (u > 0 && u <= n && v > 0 && v <= n) {
         list<int>& uList = adjacencyList[u];
         typename list<int>::const_iterator uIt = find(uList.begin(), uList.end(), v);
@@ -76,96 +97,159 @@ void Graph::removeEdge(int u, int v) {
 }
 
 // Method to get the transposed graph
-Graph* Graph::getTransposed()
+Graph* Graph::GetTransposed()
 {
     Graph* transposedGraph = new Graph(n);
     for (int v = 1; v <= n; v++) {
         for (int u : adjacencyList[v]) {
-            transposedGraph->addEdge(u, v);
+            transposedGraph->AddEdge(u, v);
         }
     }
     return transposedGraph;
 }
 
-// setting the color list to be all white
-void Graph::setColorList()
+// Setting the DFS object values
+void Graph::setDFSObject()
 {
-    colorList.resize(n + 1);
-    for (eVerticesDfsStatus color : colorList)
-    {
-        color = eVerticesDfsStatus::WHITE;
-    }
-}
-
-// setting the DFS object values
-void Graph::setDFSObject(DFSObject* dfsObject)
-{
+    this->dfsObject = new DFSObject();
     dfsObject->dfsGraph = new Graph(n);
     dfsObject->endList.reserve(n + 1);
     dfsObject->endList.push_back(0); // for ignoring index 0 later
+    dfsObject->dfsRoots.resize(n + 1);
+    machingVetexInSuperGraph.resize(n + 1);
+    setColorList();
 }
 
-// main loop of the DFS
-Graph::DFSObject* Graph::runDFS(vector<int> startList)
+// Call an error if requested a DFS object bedore creating one
+void Graph::throwErrorIfDfsObjectDoestExist()
 {
-    DFSObject* dfsObject = new DFSObject();
-    setDFSObject(dfsObject);
-    setColorList();
+    if (dfsObject == nullptr)
+        throw logic_error("please call runDFS or runSharirKosaraju first.");
+}
+
+// Method to return the DFS roots
+vector<int> Graph::GetDfsRoots()
+{
+    throwErrorIfDfsObjectDoestExist();
+    return dfsObject->dfsRoots;
+}
+
+// Methos to return the DFS graph
+Graph* Graph::GetDfsGraph()
+{
+    throwErrorIfDfsObjectDoestExist();
+    return dfsObject->dfsGraph;
+}
+
+// Setting the color list to be all white
+void Graph::setColorList()
+{
+    dfsObject->colorList.resize(n + 1);
+    for (DFSObject::eVerticesDfsStatus color : dfsObject->colorList)
+    {
+        color = DFSObject::eVerticesDfsStatus::WHITE;
+    }
+}
+
+// Main loop of the DFS
+void Graph::RunDFS()
+{
+    setDFSObject();
+
     for (int i = 1; i <= n; i++)
     {
-        if (startList.size() != 0) // run DFS by given start list
-        {
-            if (colorList[startList[i]] == eVerticesDfsStatus::WHITE)
-                visit(startList[i], dfsObject);
-        }
-        else // no given start list, run DFS from first vertice
-        {
-            if (colorList[i] == eVerticesDfsStatus::WHITE)
-                visit(i, dfsObject);
-        }
+        if (dfsObject->colorList[i] == DFSObject::eVerticesDfsStatus::WHITE)
+            visit(i, i);
     }
-    return dfsObject;
 }
 
-// visit recursive function
-void Graph::visit(int vertice, DFSObject* dfsObject)
+// Visit recursive function, create the DFS tree
+void Graph::visit(int vertex, int root)
 {
-    colorList[vertice] = eVerticesDfsStatus::GRAY;
-    Graph* dfsGraph = dfsObject->dfsGraph;
-    const list<int>& adjVertice = getAdjList(vertice);
-    for (const int& adj : adjVertice)
+    dfsObject->dfsRoots[vertex] = root;
+    dfsObject->colorList[vertex] = DFSObject::eVerticesDfsStatus::GRAY;
+    const list<int>& adjVertices = GetAdjList(vertex);
+    for (const int& adj : adjVertices)
     {
-        if (colorList[adj] == eVerticesDfsStatus::WHITE)
+        if (dfsObject->colorList[adj] == DFSObject::eVerticesDfsStatus::WHITE)
         {
             //its a tree arc, adding to the dfs tree
-            dfsGraph->addEdge(vertice, adj);
-            visit(adj, dfsObject);
+            dfsObject->dfsGraph->AddEdge(vertex, adj);
+            visit(adj, root);
+        }
+    }
+    dfsObject->colorList[vertex] = DFSObject::eVerticesDfsStatus::BLACK;
+    dfsObject->endList.push_back(vertex); // vertex becomes black, added to the end list
+}
+
+// Run the DFS algoritm on the transpose graph and create the Super Graph
+// does not create the DFS graph or the end list of the origin graph!
+Graph* Graph::createSuperGraphWithDFS(vector<int> orderList)
+{
+    setDFSObject();
+    int superGraphSize = 0;
+    Graph* superGraph = new Graph(0);
+
+    for (int i = 1; i <= n; i++)
+    {
+        if (dfsObject->colorList[orderList[i]] == DFSObject::eVerticesDfsStatus::WHITE)
+        {
+            superGraph->AddVertex();
+            superGraphSize += 1;
+            visitSuperGraph(orderList[i], orderList[i], superGraphSize, superGraph);
         }
     }
 
-    colorList[vertice] = eVerticesDfsStatus::BLACK;
-    dfsObject->endList.push_back(vertice); // vertice becomes black, added to the end list
+    return superGraph;
 }
 
-// Sharir-Kosaraju algorithm
-Graph* Graph::runSharirKosaraju()
+// Add the edeges to the Super Graph with the visit ajusted algoritm
+void Graph::visitSuperGraph(int vertex, int root,
+    int superGraphMachingVertex, Graph* superGraph)
 {
-    DFSObject* dfsObject = new DFSObject();
-    setDFSObject(dfsObject);
+    machingVetexInSuperGraph[vertex] = superGraphMachingVertex;
+    dfsObject->colorList[vertex] = DFSObject::eVerticesDfsStatus::GRAY;
+    const list<int>& adjVertices = GetAdjList(vertex);
+    for (const int& adj : adjVertices)
+    {
+        if (dfsObject->colorList[adj] == DFSObject::eVerticesDfsStatus::WHITE)
+        {
+            visitSuperGraph(adj, root, superGraphMachingVertex, superGraph);
+        }
+        else if (dfsObject->colorList[adj] == DFSObject::eVerticesDfsStatus::BLACK &&
+            machingVetexInSuperGraph[vertex] != machingVetexInSuperGraph[adj])
+        {
+            //if its a back arc and the vertices doest have the same root
+            //add the transpose edge to the superGraph
+            superGraph->AddEdge(machingVetexInSuperGraph[adj], machingVetexInSuperGraph[vertex]);
+        }
+    }
+    dfsObject->colorList[vertex] = DFSObject::eVerticesDfsStatus::BLACK;
+}
 
+// Create Super Graph with - Sharir-Kosaraju algorithm
+Graph* Graph::CreateSuperGraph()
+{
     // run DFS on the graph
-    dfsObject = runDFS();
+    RunDFS();
 
     // build the transposed graph
-    Graph* transposedGraph = getTransposed();
+    Graph* transposedGraph = GetTransposed();
 
     // Build reversed end list
     vector<int> reversedEndList = dfsObject->endList;
     reverse(reversedEndList.begin() + 1, reversedEndList.end());
 
     // run DFS on the transposed graph using the reversed end list
-    DFSObject* transposedDfsGraph = transposedGraph->runDFS(reversedEndList);
+    Graph* superGraph = transposedGraph->createSuperGraphWithDFS(reversedEndList);
+    
+    //for us for debug!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    for (int i = 1; i <= transposedGraph->GetNumOfVertices(); i++)
+    {
+        cout << "vertex " << i << " vertex in super graph " << transposedGraph->machingVetexInSuperGraph[i] << endl;
+    }
+    
     delete transposedGraph;
 
-    return transposedDfsGraph->dfsGraph;
+    return superGraph;
 }
