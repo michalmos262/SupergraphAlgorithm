@@ -2,7 +2,7 @@
 
 void printGraph(Graph* g)
 {
-    for (int i = 0; i < g->getNumOfVertices(); i++)
+    for (int i = 0; i < g->GetNumOfVertices(); i++)
     {
         cout << i + 1 << ": ";
         const list<int>& adj = g->GetAdjList(i + 1);
@@ -34,6 +34,6 @@ int main() {
     g->AddEdge(11, 9);
     g->AddEdge(11, 10);
 
-    Graph* superGraph = g->createSuperGraph();
+    Graph* superGraph = g->CreateSuperGraph();
     printGraph(superGraph);
 }

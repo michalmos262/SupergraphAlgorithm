@@ -13,18 +13,19 @@ class Graph
 public:
 	Graph(int n = 0);
 	Graph(Graph& other);
+	~Graph();
 
-	int getNumOfVertices() const { return n; }
-	int getNumOfEdges() const { return m; }
+	int GetNumOfVertices() const { return n; }
+	int GetNumOfEdges() const { return m; }
 
 	void MakeEmptyGraph(int n);
-	void addVertex();
+	void AddVertex();
 	bool IsAdjacent(int u, int v) const;
 	const list<int>& GetAdjList(int u) const;
 	void AddEdge(int u, int v);
 	void RemoveEdge(int u, int v);
-	void printGraph() const { cout << n << " " << m << endl; }
-	Graph* getTransposed();
+	void PrintGraph() const { cout << n << " " << m << endl; }
+	Graph* GetTransposed();
 
 	struct DFSObject
 	{
@@ -35,11 +36,11 @@ public:
 		vector<eVerticesDfsStatus> colorList;
 	};
 
-	vector<int> getDfsRoots();
-	Graph* getDfsGraph();
+	vector<int> GetDfsRoots();
+	Graph* GetDfsGraph();
 
-	void runDFS();
-	Graph* createSuperGraph();
+	void RunDFS();
+	Graph* CreateSuperGraph();
 
 private:
 	int n; // number of vertices
@@ -52,7 +53,7 @@ private:
 	void setColorList();
 	void visit(int vertex, int root);
 	//below method is private, use only on the transpose graph
-	Graph* runDFSCreatingSuperGraph(vector<int> orderList);
+	Graph* createSuperGraphWithDFS(vector<int> orderList);
 	void visitSuperGraph(int vertex, int root, int superGraphMachingVertex, Graph* superGraph);
 	void throwErrorIfDfsObjectDoestExist();
 

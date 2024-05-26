@@ -6,7 +6,7 @@ Graph::Graph(int n)
     MakeEmptyGraph(n);
 }
 
-// copy constructor
+// Copy constructor
 Graph::Graph(Graph& other)
 {
     n = other.n;
@@ -19,6 +19,14 @@ Graph::Graph(Graph& other)
     }
 }
 
+// Dtor
+Graph::~Graph()
+{
+    if (!dfsObject)
+        delete dfsObject;
+}
+
+
 // Method to create an empty graph with n vertices
 void Graph::MakeEmptyGraph(int n)
 {
@@ -29,7 +37,7 @@ void Graph::MakeEmptyGraph(int n)
 }
 
 // Method to add a vertex to the graph
-void Graph::addVertex()
+void Graph::AddVertex()
 {
     n += 1;
     adjacencyList.resize(n + 1);
@@ -89,7 +97,7 @@ void Graph::RemoveEdge(int u, int v)
 }
 
 // Method to get the transposed graph
-Graph* Graph::getTransposed()
+Graph* Graph::GetTransposed()
 {
     Graph* transposedGraph = new Graph(n);
     for (int v = 1; v <= n; v++) {
@@ -120,14 +128,14 @@ void Graph::throwErrorIfDfsObjectDoestExist()
 }
 
 // Method to return the DFS roots
-vector<int> Graph::getDfsRoots()
+vector<int> Graph::GetDfsRoots()
 {
     throwErrorIfDfsObjectDoestExist();
     return dfsObject->dfsRoots;
 }
 
 // Methos to return the DFS graph
-Graph* Graph::getDfsGraph()
+Graph* Graph::GetDfsGraph()
 {
     throwErrorIfDfsObjectDoestExist();
     return dfsObject->dfsGraph;
@@ -144,7 +152,7 @@ void Graph::setColorList()
 }
 
 // Main loop of the DFS
-void Graph::runDFS()
+void Graph::RunDFS()
 {
     setDFSObject();
 
@@ -176,7 +184,7 @@ void Graph::visit(int vertex, int root)
 
 // Run the DFS algoritm on the transpose graph and create the Super Graph
 // does not create the DFS graph or the end list of the origin graph!
-Graph* Graph::runDFSCreatingSuperGraph(vector<int> orderList)
+Graph* Graph::createSuperGraphWithDFS(vector<int> orderList)
 {
     setDFSObject();
     int superGraphSize = 0;
@@ -186,7 +194,7 @@ Graph* Graph::runDFSCreatingSuperGraph(vector<int> orderList)
     {
         if (dfsObject->colorList[orderList[i]] == DFSObject::eVerticesDfsStatus::WHITE)
         {
-            superGraph->addVertex();
+            superGraph->AddVertex();
             superGraphSize += 1;
             visitSuperGraph(orderList[i], orderList[i], superGraphSize, superGraph);
         }
@@ -220,23 +228,23 @@ void Graph::visitSuperGraph(int vertex, int root,
 }
 
 // Create Super Graph with - Sharir-Kosaraju algorithm
-Graph* Graph::createSuperGraph()
+Graph* Graph::CreateSuperGraph()
 {
     // run DFS on the graph
-    runDFS();
+    RunDFS();
 
     // build the transposed graph
-    Graph* transposedGraph = getTransposed();
+    Graph* transposedGraph = GetTransposed();
 
     // Build reversed end list
     vector<int> reversedEndList = dfsObject->endList;
     reverse(reversedEndList.begin() + 1, reversedEndList.end());
 
     // run DFS on the transposed graph using the reversed end list
-    Graph* superGraph = transposedGraph->runDFSCreatingSuperGraph(reversedEndList);
+    Graph* superGraph = transposedGraph->createSuperGraphWithDFS(reversedEndList);
     
     //for us for debug!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (int i = 1; i <= transposedGraph->getNumOfVertices(); i++)
+    for (int i = 1; i <= transposedGraph->GetNumOfVertices(); i++)
     {
         cout << "vertex " << i << " vertex in super graph " << transposedGraph->machingVetexInSuperGraph[i] << endl;
     }
