@@ -1,9 +1,22 @@
 #include "graph.h"
 
+// The error message that will be printed to the user when error is thrown
+const string Graph::ERROR_MESSAGE = "invalid input";
+
 // Constructor
 Graph::Graph(int n)
 {
+    verifyAmountOfVertices(n);
     MakeEmptyGraph(n);
+}
+
+// A generic function for v
+void Graph::verifyAmountOfVertices(int amountOfVertices) const
+{
+    if (amountOfVertices < 0)
+    {
+        throw invalid_argument(ERROR_MESSAGE);
+    }
 }
 
 // Copy constructor
@@ -19,13 +32,12 @@ Graph::Graph(Graph& other)
     }
 }
 
-// Dtor
+// D'tor
 Graph::~Graph()
 {
     if (!dfsObject)
         delete dfsObject;
 }
-
 
 // Method to create an empty graph with n vertices
 void Graph::MakeEmptyGraph(int n)
@@ -43,13 +55,33 @@ void Graph::AddVertex()
     adjacencyList.resize(n + 1);
 }
 
+void Graph::verifyVertexExists(int v) const
+{
+    if (!(v >= 1 && v <= n))
+    {
+        throw invalid_argument(ERROR_MESSAGE);
+    }
+}
+
+void Graph::verifySelfEdge(int u, int v) const
+{
+    if (u == v)
+    {
+        throw invalid_argument(ERROR_MESSAGE);
+    }
+}
 
 // Method to check if there is an edge between u and v
 bool Graph::IsAdjacent(int u, int v) const
 {
-    if (u > 0 && u <= n && v > 0 && v <= n) {
-        const list<int>& neighbors = adjacencyList[u];
-        return find(neighbors.begin(), neighbors.end(), v) != neighbors.end();
+    verifyVertexExists(u);
+    verifyVertexExists(v);
+
+    const list<int>& neighbors = adjacencyList[u];
+    list<int>::const_iterator adj = find(neighbors.begin(), neighbors.end(), v);
+    if (adj != neighbors.end())
+    {
+        return true;
     }
     return false;
 }
@@ -57,42 +89,36 @@ bool Graph::IsAdjacent(int u, int v) const
 // Method to get the adjacency list of vertex u
 const list<int>& Graph::GetAdjList(int u) const
 {
-    if (u > 0 && u <= n) {
-        return adjacencyList[u];
-    }
-    throw invalid_argument("Invalid vertex index");
+    verifyVertexExists(u);
+    return adjacencyList[u];
 }
 
 // Method to add an edge
 void Graph::AddEdge(int u, int v)
 {
-    if (u > 0 && u <= n && v > 0 && v <= n && u != v) {
-        if (!IsAdjacent(u, v)) {
-            adjacencyList[u].push_back(v);
-            m++;
-        }
-    }
-    else {
-        throw invalid_argument("Invalid vertex index");
+    verifySelfEdge(u, v);
+    verifyVertexExists(u);
+    verifyVertexExists(v);
+    if (!IsAdjacent(u, v))
+    {
+        adjacencyList[u].push_back(v);
+        m++;
     }
 }
 
 // Method to remove an edge
 void Graph::RemoveEdge(int u, int v)
 {
-    if (u > 0 && u <= n && v > 0 && v <= n) {
-        list<int>& uList = adjacencyList[u];
-        typename list<int>::const_iterator uIt = find(uList.begin(), uList.end(), v);
-        if (uIt != uList.end()) {
-            uList.erase(uIt);
-            m--;
-        }
-        else {
-            throw invalid_argument("Edge doesn't exist");
-        }
+    verifyVertexExists(u);
+    verifyVertexExists(v);
+    list<int>& uList = adjacencyList[u];
+    typename list<int>::const_iterator uIt = find(uList.begin(), uList.end(), v);
+    if (uIt != uList.end()) {
+        uList.erase(uIt);
+        m--;
     }
     else {
-        throw invalid_argument("Invalid vertex index");
+        throw invalid_argument("Edge doesn't exist");
     }
 }
 
@@ -121,10 +147,10 @@ void Graph::setDFSObject()
 }
 
 // Call an error if requested a DFS object bedore creating one
-void Graph::throwErrorIfDfsObjectDoestExist()
+void Graph::throwErrorIfDfsObjectDoestExist() const
 {
     if (dfsObject == nullptr)
-        throw logic_error("please call runDFS or runSharirKosaraju first.");
+        throw logic_error("Please call runDFS method or runSharirKosaraju method first.");
 }
 
 // Method to return the DFS roots
@@ -236,18 +262,12 @@ Graph* Graph::CreateSuperGraph()
     // build the transposed graph
     Graph* transposedGraph = GetTransposed();
 
-    // Build reversed end list
+    // build reversed end list
     vector<int> reversedEndList = dfsObject->endList;
     reverse(reversedEndList.begin() + 1, reversedEndList.end());
 
     // run DFS on the transposed graph using the reversed end list
     Graph* superGraph = transposedGraph->createSuperGraphWithDFS(reversedEndList);
-    
-    //for us for debug!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (int i = 1; i <= transposedGraph->GetNumOfVertices(); i++)
-    {
-        cout << "vertex " << i << " vertex in super graph " << transposedGraph->machingVetexInSuperGraph[i] << endl;
-    }
     
     delete transposedGraph;
 

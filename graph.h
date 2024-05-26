@@ -5,6 +5,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
@@ -17,6 +18,8 @@ public:
 
 	int GetNumOfVertices() const { return n; }
 	int GetNumOfEdges() const { return m; }
+
+	static const string ERROR_MESSAGE;
 
 	void MakeEmptyGraph(int n);
 	void AddVertex();
@@ -55,7 +58,11 @@ private:
 	//below method is private, use only on the transpose graph
 	Graph* createSuperGraphWithDFS(vector<int> orderList);
 	void visitSuperGraph(int vertex, int root, int superGraphMachingVertex, Graph* superGraph);
-	void throwErrorIfDfsObjectDoestExist();
+
+	void verifyVertexExists(int v) const;
+	void verifySelfEdge(int u, int v) const;
+	void verifyAmountOfVertices(int amountOfVertices) const;
+	void throwErrorIfDfsObjectDoestExist() const;
 
 };
 
