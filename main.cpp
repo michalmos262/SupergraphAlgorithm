@@ -20,6 +20,8 @@ int main() {
 
         Graph* superGraph = graph.CreateSuperGraph();
         cout << superGraph->GetNumOfVertices() << " " << superGraph->GetNumOfEdges();
+
+        delete superGraph;
     }
     catch (exception& e)
     {
