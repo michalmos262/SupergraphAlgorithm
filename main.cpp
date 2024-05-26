@@ -8,7 +8,7 @@ void AddEdgesToGraph(Graph& graph, int numOfEdges);
 /// </summary>
 /// <returns>The number of vertices and edges of the Supergraph</returns>
 int main() {
-    int numOfVertices, numOfEdges, u, v;
+    int numOfVertices, numOfEdges;
 
     try
     {
