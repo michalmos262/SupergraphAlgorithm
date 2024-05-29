@@ -95,13 +95,28 @@ const list<int>& Graph::GetAdjList(int u) const
     return adjacencyList[u];
 }
 
-// Method to add an edge
-void Graph::AddEdge(int u, int v)
+// Method to add an edge.
+// If it's a supergraph, enough just checking the last adjacent of u.
+// Else, need to verify if edge exists
+void Graph::AddEdge(int u, int v, bool isSuperGraph)
 {
-    verifySelfEdge(u, v);
+    bool isNewEdge = false;
     verifyVertexExists(u);
     verifyVertexExists(v);
-    if (!IsAdjacent(u, v))
+    verifySelfEdge(u, v);
+
+    if (isSuperGraph)
+    {
+        if (adjacencyList[u].size() == 0 || adjacencyList[u].back() != v)
+        {
+            isNewEdge = true;
+        }
+    }
+    else if (!IsAdjacent(u, v))
+    {
+        isNewEdge = true;
+    }
+    if (isNewEdge)
     {
         adjacencyList[u].push_back(v);
         m++;
@@ -232,8 +247,7 @@ Graph* Graph::createSuperGraphWithDFS(vector<int> orderList)
 }
 
 // Add the edeges to the Super Graph with the visit ajusted algoritm
-void Graph::visitSuperGraph(int vertex, int root,
-    int superGraphMachingVertex, Graph* superGraph)
+void Graph::visitSuperGraph(int vertex, int root, int superGraphMachingVertex, Graph* superGraph)
 {
     machingVetexInSuperGraph[vertex] = superGraphMachingVertex;
     dfsObject->colorList[vertex] = DFSObject::eVerticesDfsStatus::GRAY;
@@ -249,7 +263,7 @@ void Graph::visitSuperGraph(int vertex, int root,
         {
             //if its a back arc and the vertices doest have the same root
             //add the transpose edge to the superGraph
-            superGraph->AddEdge(machingVetexInSuperGraph[adj], machingVetexInSuperGraph[vertex]);
+            superGraph->AddEdge(machingVetexInSuperGraph[adj], machingVetexInSuperGraph[vertex], true);
         }
     }
     dfsObject->colorList[vertex] = DFSObject::eVerticesDfsStatus::BLACK;
