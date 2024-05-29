@@ -96,7 +96,7 @@ const list<int>& Graph::GetAdjList(int u) const
 }
 
 // Method to add an edge.
-// If it's a supergraph, enough just checking the last adjacent of u.
+// If it's a SuperGraph, enough just checking the last adjacent of u.
 // Else, need to verify if edge exists
 void Graph::AddEdge(int u, int v, bool isSuperGraph)
 {
@@ -166,7 +166,7 @@ vector<int> Graph::GetDfsRoots()
     return dfsObject->dfsRoots;
 }
 
-// Methos to return the DFS graph
+// Method to return the DFS graph
 Graph* Graph::GetDfsGraph()
 {
     throwErrorIfDfsObjectDoestExist();
@@ -214,7 +214,7 @@ void Graph::visit(int vertex, int root)
     dfsObject->endList.push_back(vertex); // vertex becomes black, added to the end list
 }
 
-// Run the DFS algoritm on the transpose graph and create the Super Graph
+// Run the DFS algorithm on the transpose graph and create the Super Graph
 // does not create the DFS graph or the end list of the origin graph!
 Graph* Graph::createSuperGraphWithDFS(vector<int> orderList)
 {
@@ -235,7 +235,7 @@ Graph* Graph::createSuperGraphWithDFS(vector<int> orderList)
     return superGraph;
 }
 
-// Add the edeges to the Super Graph with the visit ajusted algoritm
+// Add the edges to the Super Graph with the visit adjusted algorithm
 void Graph::visitSuperGraph(int vertex, int root, int superGraphMachingVertex, Graph* superGraph)
 {
     machingVetexInSuperGraph[vertex] = superGraphMachingVertex;
