@@ -105,12 +105,9 @@ void Graph::AddEdge(int u, int v, bool isSuperGraph)
     verifyVertexExists(v);
     verifySelfEdge(u, v);
 
-    if (isSuperGraph)
+    if (isSuperGraph && (adjacencyList[u].size() == 0 || adjacencyList[u].back() != v))
     {
-        if (adjacencyList[u].size() == 0 || adjacencyList[u].back() != v)
-        {
-            isNewEdge = true;
-        }
+        isNewEdge = true;
     }
     else if (!IsAdjacent(u, v))
     {
