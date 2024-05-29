@@ -100,20 +100,12 @@ const list<int>& Graph::GetAdjList(int u) const
 // Else, need to verify if edge exists
 void Graph::AddEdge(int u, int v, bool isSuperGraph)
 {
-    bool isNewEdge = false;
     verifyVertexExists(u);
     verifyVertexExists(v);
     verifySelfEdge(u, v);
 
-    if (isSuperGraph && (adjacencyList[u].size() == 0 || adjacencyList[u].back() != v))
-    {
-        isNewEdge = true;
-    }
-    else if (!IsAdjacent(u, v))
-    {
-        isNewEdge = true;
-    }
-    if (isNewEdge)
+    bool addEdgeToSuperGraph = isSuperGraph && (adjacencyList[u].size() == 0 || adjacencyList[u].back() != v);
+    if (addEdgeToSuperGraph || !IsAdjacent(u, v))
     {
         adjacencyList[u].push_back(v);
         m++;
