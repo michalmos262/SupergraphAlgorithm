@@ -25,7 +25,7 @@ public:
 	void AddVertex();
 	bool IsAdjacent(int u, int v) const;
 	const list<int>& GetAdjList(int u) const;
-	void AddEdge(int u, int v);
+	void AddEdge(int u, int v, bool isSuperGraph = false);
 	void RemoveEdge(int u, int v);
 	void PrintGraph() const { cout << n << " " << m << endl; }
 	Graph* GetTransposed();

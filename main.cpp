@@ -3,10 +3,10 @@
 void AddEdgesToGraph(Graph& graph, int numOfEdges);
 
 /// <summary>
-/// The program recieves a number of vertices and a number of edges and creates a graph from them.
-/// Then, the program creates the supergraph of the graph.
+/// The program receives a number of vertices and a number of edges and creates a graph from them.
+/// Then, the program creates the SuperGraph of the graph.
 /// </summary>
-/// <returns>The number of vertices and edges of the Supergraph</returns>
+/// <returns>The number of vertices and edges of the SuperGraph</returns>
 int main() {
     int numOfVertices, numOfEdges;
 
